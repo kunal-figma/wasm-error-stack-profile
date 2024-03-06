@@ -1,0 +1,55 @@
+<html>
+  <head>
+    <style>
+      table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+      }
+      th, td {
+        padding: 15px;
+      }
+    </style>
+    <script type="text/javascript" src="error_stack_profile.js"></script>
+    <script type="text/javascript">
+      function runProfile(stackSize) {
+          const start = window.performance.now();
+          const NUM_SAMPLES = 10000;
+          for (let i = 0; i < NUM_SAMPLES; i++) {
+            new Error().stack
+          }
+          const end = window.performance.now();
+          var table = document.getElementById("datatable");
+          let newRow = table.insertRow(-1);
+          var description = 'WASM Stack Size ' + stackSize;
+          var descriptionCell = newRow.insertCell(-1);
+          descriptionCell.appendChild(document.createTextNode(description));
+          var performance = (end - start) / NUM_SAMPLES;
+          var performanceCell = newRow.insertCell(-1);
+          performanceCell.appendChild(document.createTextNode(performance));
+          newRow.appendChild(descriptionCell);
+          newRow.appendChild(performanceCell);
+      }
+      Error.stackTraceLimit = Infinity;
+    </script>
+    <script type="text/javascript">
+      Module.onRuntimeInitialized = () => {
+        setTimeout(function() {Module.ccall("errorStackProfile", null, ['number'], [1, 1])}, 0);
+        setTimeout(function() {Module.ccall("errorStackProfile", null, ['number'], [10, 10])}, 0);
+        setTimeout(function() {Module.ccall("errorStackProfile", null, ['number'], [100, 100])}, 0);
+      }
+      setTimeout(function() {
+        runProfile(0);
+      }, 0);
+    </script>
+  </head>
+
+  <body>
+    <h1>Error Stack Profiles</h1>
+    <table id="datatable">
+      <tr>
+        <th>Description</th>
+        <th>Performance (ms)</th>
+      </tr>
+    </table>
+  </body>
+</html>
