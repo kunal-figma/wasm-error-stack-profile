@@ -967,7 +967,7 @@ function dbg(...args) {
 // end include: runtime_debug.js
 // === Body ===
 
-function jsErrorStackProfile(stackSize) { runProfile(stackSize); }
+function jsErrorStackProfile(stackSize) { runProfile('WASM stack size: ' + stackSize); }
 
 // end include: preamble.js
 
@@ -1289,7 +1289,7 @@ var stackRestore = createExportWrapper('stackRestore');
 var stackAlloc = createExportWrapper('stackAlloc');
 var _emscripten_stack_get_current = () => (_emscripten_stack_get_current = wasmExports['emscripten_stack_get_current'])();
 var ___start_em_js = Module['___start_em_js'] = 65536;
-var ___stop_em_js = Module['___stop_em_js'] = 65582;
+var ___stop_em_js = Module['___stop_em_js'] = 65604;
 
 // include: postamble.js
 // === Auto-generated postamble setup entry stuff ===

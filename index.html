@@ -11,19 +11,30 @@
     </style>
     <script type="text/javascript" src="error_stack_profile.js"></script>
     <script type="text/javascript">
-      function runProfile(stackSize) {
+      function getPerformanceOfStackTrace() {
           const start = window.performance.now();
           const NUM_SAMPLES = 10000;
           for (let i = 0; i < NUM_SAMPLES; i++) {
             new Error().stack
           }
           const end = window.performance.now();
+          return (end - start) / NUM_SAMPLES;
+      }
+
+      function runJSOnlyProfile(stacksize, current) {
+        if (current == 0) {
+          runProfile('JS stack size: ' + stacksize)
+        } else {
+          runJSOnlyProfile(stacksize, current - 1)
+        }
+      }
+
+      function runProfile(description) {
           var table = document.getElementById("datatable");
           let newRow = table.insertRow(-1);
-          var description = 'WASM Stack Size ' + stackSize;
           var descriptionCell = newRow.insertCell(-1);
           descriptionCell.appendChild(document.createTextNode(description));
-          var performance = (end - start) / NUM_SAMPLES;
+          var performance = getPerformanceOfStackTrace();
           var performanceCell = newRow.insertCell(-1);
           performanceCell.appendChild(document.createTextNode(performance));
           newRow.appendChild(descriptionCell);
@@ -36,9 +47,19 @@
         setTimeout(function() {Module.ccall("errorStackProfile", null, ['number'], [1, 1])}, 0);
         setTimeout(function() {Module.ccall("errorStackProfile", null, ['number'], [10, 10])}, 0);
         setTimeout(function() {Module.ccall("errorStackProfile", null, ['number'], [100, 100])}, 0);
+        setTimeout(function() {Module.ccall("errorStackProfile", null, ['number'], [1000, 1000])}, 0);
       }
       setTimeout(function() {
-        runProfile(0);
+        runJSOnlyProfile(1, 1);
+      }, 0);
+      setTimeout(function() {
+        runJSOnlyProfile(10, 10);
+      }, 0);
+      setTimeout(function() {
+        runJSOnlyProfile(100, 100);
+      }, 0);
+      setTimeout(function() {
+        runJSOnlyProfile(1000, 1000);
       }, 0);
     </script>
   </head>

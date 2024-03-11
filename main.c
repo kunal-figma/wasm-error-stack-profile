@@ -1,6 +1,6 @@
 #include <emscripten.h>
 
-EM_JS(void, jsErrorStackProfile, (int stackSize), { runProfile(stackSize); });
+EM_JS(void, jsErrorStackProfile, (int stackSize), { runProfile('WASM stack size: ' + stackSize); });
 
 void errorStackProfile(int stackSize, int remainingStackSize) {
   if (remainingStackSize == 0) {
